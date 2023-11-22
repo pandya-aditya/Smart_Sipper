@@ -54,10 +54,17 @@ static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void PlayNote (int Time){
+void Play_Note (int Time){
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, 1);
 	HAL_Delay(Time);
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, 0);
+
+}
+
+void LED(int Time){
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+	HAL_Delay(Time);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
 	HAL_Delay(Time);
 }
 /* USER CODE END 0 */
@@ -91,19 +98,33 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
+  int bottle_size = 650;
+  int drinking = 650;
+  int total_drank = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  PlayNote(500);
-	  break;
+	  
+	  Play_Note(500);
+	  drinking -= 250;
+	  if(drinking <= 0){
+		  LED(5000);
+		  total_drank += bottle_size;
+		  drinking = bottle_size;
+	  }
 
+	  if(total_drank >= 3600){
+		  break;
+	  }
+
+	  HAL_Delay(10000);
   }
   /* USER CODE END 3 */
 }
@@ -164,10 +185,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0|GPIO_PIN_10, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PA0 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0;
+  /*Configure GPIO pins : PA0 PA10 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_10;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -178,7 +199,17 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+int _write(int file, char *ptr, int len)
+{
+  (void)file;
+  int DataIdx;
 
+  for (DataIdx = 0; DataIdx < len; DataIdx++)
+  {
+    ITM_SendChar(*ptr++);
+  }
+  return len;
+}
 /* USER CODE END 4 */
 
 /**
