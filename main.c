@@ -61,12 +61,7 @@ void Play_Note (int Time){
 
 }
 
-void LED(int Time){
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
-	HAL_Delay(Time);
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
-	HAL_Delay(Time);
-}
+
 /* USER CODE END 0 */
 
 /**
@@ -113,16 +108,6 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	  
 	  Play_Note(500);
-	  drinking -= 250;
-	  if(drinking <= 0){
-		  LED(5000);
-		  total_drank += bottle_size;
-		  drinking = bottle_size;
-	  }
-
-	  if(total_drank >= 3600){
-		  break;
-	  }
 
 	  HAL_Delay(10000);
   }
@@ -199,17 +184,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-int _write(int file, char *ptr, int len)
-{
-  (void)file;
-  int DataIdx;
 
-  for (DataIdx = 0; DataIdx < len; DataIdx++)
-  {
-    ITM_SendChar(*ptr++);
-  }
-  return len;
-}
 /* USER CODE END 4 */
 
 /**
